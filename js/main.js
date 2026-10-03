@@ -8,7 +8,14 @@ import { Match, Penalties, Tournament } from './match.js';
 import { audio } from './audio.js';
 
 const canvas = document.getElementById('game');
-const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance' });
+} catch (e) {
+  const tag = document.querySelector('#loading .tagline');
+  if (tag) tag.textContent = 'This game needs WebGL, which is unavailable in this browser.';
+  throw e;
+}
 const isMobile = ('ontouchstart' in window) || navigator.maxTouchPoints > 0 || Math.min(screen.width, screen.height) < 700;
 renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, isMobile ? 1.5 : 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
