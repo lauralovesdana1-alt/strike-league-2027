@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>G-Football 2027</title>
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js" } }
+</script>
+</head>
+<body>
+<div id="app">
+  <canvas id="game"></canvas>
+
+  <!-- Loading -->
+  <div id="loading" class="screen">
+    <div class="logo">G-FOOTBALL <span>2027</span></div>
+    <div class="loadbar"><div id="loadfill"></div></div>
+    <div class="tagline">Loading the stadium…</div>
+  </div>
+
+  <!-- Main menu -->
+  <div id="menu" class="screen hidden">
+    <div class="logo">G-FOOTBALL <span>2027</span></div>
+    <div class="tagline">The arcade soccer championship</div>
+    <div class="btn-col">
+      <button class="btn big" id="btn-quick">⚽ Quick Match</button>
+      <button class="btn big" id="btn-tourney">🏆 Tournament</button>
+      <button class="btn big" id="btn-pens">🥅 Penalty Shootout</button>
+      <button class="btn" id="btn-howto">❓ How to Play</button>
+    </div>
+    <div class="foot">7v7 • 8 clubs • 3 difficulties</div>
+  </div>
+
+  <!-- Team select -->
+  <div id="teamselect" class="screen hidden">
+    <h2>CHOOSE YOUR CLUB</h2>
+    <div id="teamgrid"></div>
+    <button class="btn back" data-back>← Back</button>
+  </div>
+
+  <!-- Difficulty + half length -->
+  <div id="diffselect" class="screen hidden">
+    <h2 id="diff-title">MATCH SETUP</h2>
+    <div class="lbl">Difficulty</div>
+    <div class="btn-row" id="diffrow">
+      <button class="btn diff" data-d="amateur">Amateur</button>
+      <button class="btn diff sel" data-d="pro">Pro</button>
+      <button class="btn diff" data-d="legend">Legend</button>
+    </div>
+    <div class="lbl">Half length</div>
+    <div class="btn-row" id="halfrow">
+      <button class="btn half" data-h="2">2 min</button>
+      <button class="btn half sel" data-h="4">4 min</button>
+      <button class="btn half" data-h="6">6 min</button>
+    </div>
+    <button class="btn big gold" id="btn-kickoff">KICK OFF →</button>
+    <button class="btn back" data-back>← Back</button>
+  </div>
+
+  <!-- How to -->
+  <div id="howto" class="screen hidden">
+    <h2>HOW TO PLAY</h2>
+    <div class="how">
+      <p><b>Move:</b> WASD / Arrows &nbsp;•&nbsp; <b>Sprint:</b> Shift &nbsp;•&nbsp; <b>Pass:</b> X &nbsp;•&nbsp; <b>Shoot:</b> hold SPACE, release &nbsp;•&nbsp; <b>Tackle:</b> V &nbsp;•&nbsp; <b>Switch:</b> Tab &nbsp;•&nbsp; <b>Pause:</b> P / Esc</p>
+      <p>📱 On phones: left stick moves, buttons pass / shoot / tackle / sprint / switch. Hold SHOOT to charge, release to fire — aim with the stick.</p>
+      <p>🥅 Penalties: aim the marker, hold SHOOT to charge, release. As keeper, tap ◀ ▶ to dive.</p>
+      <p>🏆 Tournament: 8 clubs, knockout. Draws go to extra time, then penalties.</p>
+    </div>
+    <button class="btn back" data-back>← Back</button>
+  </div>
+
+  <!-- HUD -->
+  <div id="hud" class="hidden">
+    <div id="scorebar"><span id="sc-a">LAG 0</span><span id="clock">0:00</span><span id="sc-b">0 NEO</span></div>
+    <div id="half-label">1ST</div>
+    <canvas id="minimap" width="170" height="104"></canvas>
+    <div id="stamina"><div id="stamina-fill"></div></div>
+    <div id="powermeter" class="hidden"><div id="power-fill"></div><span>POWER</span></div>
+    <button id="btn-pause" aria-label="Pause">⏸</button>
+    <div id="commentary" class="hidden"></div>
+    <!-- touch controls -->
+    <div id="touch" class="hidden">
+      <div id="joy"><div id="knob"></div></div>
+      <div id="tbtns">
+        <button class="tbtn" id="tb-shoot">SHOOT</button>
+        <button class="tbtn" id="tb-pass">PASS</button>
+        <button class="tbtn" id="tb-tackle">TACKLE</button>
+        <button class="tbtn" id="tb-sprint">SPRINT</button>
+        <button class="tbtn small" id="tb-switch">⇄</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pause -->
+  <div id="pause" class="screen hidden">
+    <h2>PAUSED</h2>
+    <div class="btn-col">
+      <button class="btn big" id="btn-resume">▶ Resume</button>
+      <button class="btn" id="btn-restart">↻ Restart Match</button>
+      <button class="btn back" id="btn-quit">Quit to Menu</button>
+    </div>
+  </div>
+
+  <!-- Bracket -->
+  <div id="bracket" class="screen hidden">
+    <h2 id="bracket-title">TOURNAMENT</h2>
+    <div id="fixtures"></div>
+    <button class="btn big gold hidden" id="btn-play-tie">PLAY MY MATCH →</button>
+  </div>
+
+  <!-- Fulltime -->
+  <div id="fulltime" class="screen hidden">
+    <h2 id="ft-title">FULL TIME</h2>
+    <div id="ft-score"></div>
+    <div id="ft-sub"></div>
+    <div class="btn-col">
+      <button class="btn big gold" id="btn-rematch">↻ Rematch</button>
+      <button class="btn back" id="btn-ft-menu">Main Menu</button>
+    </div>
+  </div>
+
+  <!-- Trophy -->
+  <div id="trophy" class="screen hidden">
+    <div class="logo small">G-FOOTBALL <span>2027</span></div>
+    <div id="trophy-cup">🏆</div>
+    <h2 id="trophy-text">CHAMPIONS</h2>
+    <div class="btn-col">
+      <button class="btn big gold" id="btn-trophy-menu">Main Menu</button>
+    </div>
+  </div>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
